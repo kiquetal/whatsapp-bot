@@ -1,9 +1,9 @@
 'use strict';
-
 const dynamodb = require('serverless-dynamodb-client');
 const Joi = require('joi');
 const httpStatus = require('http-status');
 const uuid = require('uuid');
+const util = require('./util');
 module.exports.handler = async (event, context) => {
     const schema = Joi.object({
         message_text: Joi.string()
@@ -20,7 +20,7 @@ module.exports.handler = async (event, context) => {
         const {value, error, warning} = schema.validate(JSON.parse(event.body),{allowUnknown:true});
         if (error)
         {
-            return returnError(400,error.stack);
+            return util.returnError(400,error.stack);
         }
 
         const params = {
@@ -34,7 +34,7 @@ module.exports.handler = async (event, context) => {
 
        try{
         const data = await   dynamodb.doc.query(params).promise()
-
+            console.log("util"+ JSON.stringify(util));
            if (data.Items.length<1)
            {
                return {
@@ -42,16 +42,23 @@ module.exports.handler = async (event, context) => {
                    body:JSON.stringify({"message":"User/template didnt return values"})
                }
            }
-
-
-
-
-
+           const updateParamas = {
+               TableName: TABLE_NAME,
+               Key: { HashKey : 'user_id' },
+               UpdateExpression: 'set message_text = :message_text, ',
+               ConditionExpression: '#a < :MAX',
+               ExpressionAttributeNames: {'#a' : 'Sum'},
+               ExpressionAttributeValues: {
+                   ':x' : 20,
+                   ':y' : 45,
+                   ':MAX' : 100,
+               }
+           };
 
        }
        catch (e)
        {
-           return returnError(500,e.message);
+           return util.returnError(500,e.message);
        }
 
         return {
@@ -62,31 +69,7 @@ module.exports.handler = async (event, context) => {
     }
     catch (e) {
         console.log("catch error");
-        return returnError(500, e.message);
+        return util.returnError(500, e.message);
     }
 };
 
-
-
-const returnError = (code,msg) => {
-    switch(code)
-    {
-        case 400:
-            return {
-                statusCode: httpStatus.BAD_REQUEST,
-                body: JSON.stringify({"message":msg})
-            };
-        case 404:
-            return {
-                statusCode: httpStatus.NOT_FOUND,
-                body: JSON.stringify({"message":msg})
-            };
-        case 500:
-            return {
-                statusCode: httpStatus.INTERNAL_SERVER_ERROR,
-                body: JSON.stringify({"message":msg}),
-
-            };
-
-    }
-};

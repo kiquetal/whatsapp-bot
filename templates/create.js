@@ -4,6 +4,7 @@ const dynamodb = require('serverless-dynamodb-client');
 const Joi = require('joi');
 const httpStatus = require('http-status');
 const uuid = require('uuid');
+const util = require('./util');
 module.exports.handler = async (event, context) => {
     const schema = Joi.object({
         user_id: Joi.string()
@@ -53,7 +54,7 @@ module.exports.handler = async (event, context) => {
 
             }
             catch (err) {
-               return returnError(500, err);
+               return util.returnError(500, err);
             };
 
 
@@ -90,31 +91,9 @@ module.exports.handler = async (event, context) => {
     }
     catch (e) {
         console.log("catch error");
-        return returnError(500, e.message);
+        return util.returnError(500, e.message);
     }
 };
 
 
 
-const returnError = (code,msg) => {
-    switch(code)
-    {
-        case 400:
-            return {
-                statusCode: httpStatus.BAD_REQUEST,
-                body: JSON.stringify({"message":msg})
-            };
-        case 404:
-            return {
-                statusCode: httpStatus.NOT_FOUND,
-                body: JSON.stringify({"message":msg})
-            };
-        case 500:
-            return {
-                statusCode: httpStatus.INTERNAL_SERVER_ERROR,
-                body: JSON.stringify({"message":msg}),
-
-            };
-
-    }
-};
