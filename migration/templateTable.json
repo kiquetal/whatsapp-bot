@@ -1,0 +1,37 @@
+{
+  "Table": {
+    "TableName": "templatesTable",
+    "KeySchema": [{
+      "AttributeName": "user_id",
+      "KeyType": "HASH"
+    }, {
+      "AttributeName": "template_id",
+      "KeyType": "RANGE"
+    }],
+    "AttributeDefinitions": [{
+      "AttributeName": "template_name",
+      "AttributeType": "S"
+    }, {
+      "AttributeName": "message_text",
+      "AttributeType": "S"
+    }],
+    "GlobalSecondaryIndexes": [{
+      "IndexName": "template-id-index",
+      "KeySchema": [{
+        "AttributeName": "template_id",
+        "KeyType": "HASH"
+      }],
+      "Projection": {
+        "ProjectionType": "ALL"
+      },
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+      }
+    }],
+     "ProvisionedThroughput": {
+      "ReadCapacityUnits": 1,
+      "WriteCapacityUnits": 1
+    }
+  }
+}

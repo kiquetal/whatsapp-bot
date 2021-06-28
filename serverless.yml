@@ -1,0 +1,104 @@
+service: whatsapp
+frameworkVersion: '2'
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+  region: us-east-1
+
+# you can add statements to the Lambda function's IAM Role here
+#  iamRoleStatements:
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:ListBucket"
+#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:PutObject"
+#      Resource:
+#        Fn::Join:
+#          - ""
+#          - - "arn:aws:s3:::"
+#            - "Ref" : "ServerlessDeploymentBucket"
+#            - "/*"
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+# you can add packaging information here
+#package:
+#  include:
+#    - include-me.js
+#    - include-me-dir/**
+#  exclude:
+#    - exclude-me.js
+#    - exclude-me-dir/**
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+
+functions:
+  templatesCreate:
+    handler: templates/create.handler
+    events:
+      - httpApi:
+          path: /templates
+          method: post
+    environment:
+      TEMPLATE_TABLE: ${self:custom.tables.templateTable}
+  templateUpdate:
+    handler: templates/edit.handler
+    events:
+      - httpApi:
+          path: /templates/{user_id}/{template_id}
+          method: put
+    environment:
+      TEMPLATE_TABLE: ${self:custom.tables.templateTable}
+custom:
+  dynamodb:
+    migration:
+      dir: migration
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+  serverless-offline:
+    httpPort: 4000
+  tables:
+    templateTable: templatesTable
+
+resources:
+  Resources:
+    templateTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tables.templateTable}
+        BillingMode: PROVISIONED
+        AttributeDefinitions:
+          - AttributeName: template_id
+            AttributeType: S
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+          - AttributeName: template_id
+            KeyType: RANGE
+        ProvisionedThroughput:
+           ReadCapacityUnits: 1
+           WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: template-id-index
+            KeySchema:
+              - AttributeName: template_id
+                KeyType: HASH
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+            Projection:
+              ProjectionType: ALL
