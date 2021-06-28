@@ -16,10 +16,43 @@ module.exports.handler = async (event, context) => {
         const USER_ID = event.pathParameters.user_id;
         const TEMPLATE_ID = event.pathParameters.template_id;
 
-        console.log(USER_ID);
+
+        const {value, error, warning} = schema.validate(JSON.parse(event.body),{allowUnknown:true});
+        if (error)
+        {
+            return returnError(400,error.stack);
+        }
+
+        const params = {
+            TableName: TABLE_NAME,
+            KeyConditionExpression: 'user_id = :user_id AND template_id = :template_id',
+            ExpressionAttributeValues: {
+                ':template_id': TEMPLATE_ID,
+                ":user_id":USER_ID
+            }
+        };
+
+       try{
+        const data = await   dynamodb.doc.query(params).promise()
+
+           if (data.Items.length<1)
+           {
+               return {
+                   statusCode:httpStatus.NOT_FOUND,
+                   body:JSON.stringify({"message":"User/template didnt return values"})
+               }
+           }
 
 
 
+
+
+
+       }
+       catch (e)
+       {
+           return returnError(500,e.message);
+       }
 
         return {
             statusCode:httpStatus.OK,
