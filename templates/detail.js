@@ -15,8 +15,7 @@ module.exports.handler = async (event, context) => {
             ExpressionAttributeValues: {
               ':user_id':USER_ID,
               ':template_id':TEMPLATE_ID
-            },
-            ProjectionExpression:"user_id,template_id,template_name,message_text",
+            }
         };
 
         console.log(JSON.stringify(queryParam));
