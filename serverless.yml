@@ -4,40 +4,26 @@ provider:
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: 20201221
+  profile: manning
   stage: dev
   region: us-east-1
   environment:
     TEMPLATE_TABLE: ${self:custom.tables.templateTable}
-
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.js
-#    - exclude-me-dir/**
-
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:us-east-1:572553955017:table/templatesTable"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+      Resource: "arn:aws:dynamodb:us-east-1:572553955017:table/templatesTable/index/*"
 plugins:
   - serverless-dynamodb-local
   - serverless-offline
@@ -46,7 +32,7 @@ functions:
   templatesCreate:
     handler: templates/create.handler
     events:
-      - httpApi:
+      - http:
           path: /templates
           method: post
     environment:
@@ -54,7 +40,7 @@ functions:
   templateUpdate:
     handler: templates/edit.handler
     events:
-      - httpApi:
+      - http:
           path: /templates/{user_id}/{template_id}
           method: put
     environment:
@@ -62,7 +48,7 @@ functions:
   templateDelete:
     handler: templates/delete.handler
     events:
-      - httpApi:
+      - http:
           path: /templates/{user_id}/{template_id}
           method: delete
     environment:
@@ -70,7 +56,7 @@ functions:
   templaterDetail:
     handler: templates/detail.handler
     events:
-      - httpApi:
+      - http:
           path: /templates/{user_id}/{template_id}
           method: get
     environment:
@@ -78,7 +64,7 @@ functions:
   templateByUser:
     handler: templates/list.handler
     events:
-      - httpApi:
+      - http:
           path: /templates/{user_id}
           method: get
 
