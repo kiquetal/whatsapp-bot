@@ -1,1 +1,1 @@
-http PUT http://localhost:4000/templates/6/f13956c7-0a1a-43a9-90ca-d676519d64a5  < editTemplate.json
+http PUT http://localhost:4000/templates/5/2cf1f6c6-7731-4e66-8c12-33368bc6654a  < editTemplate.json

@@ -65,6 +65,14 @@ functions:
           method: delete
     environment:
       TEMPLATE_TABLE: ${self:custom.tables.templateTable}
+  templaterDetail:
+    handler: templates/detail.handler
+    events:
+      - httpApi:
+          path: /templates/{user_id}/{template_id}
+          method: get
+    environment:
+      TEMPLATE_TABLE: ${self:custom.tables.templateTable}
 
 custom:
   dynamodb:

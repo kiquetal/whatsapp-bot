@@ -44,17 +44,21 @@ module.exports.handler = async (event, context) => {
            }
            const updateParamas = {
                TableName: TABLE_NAME,
-               Key: { HashKey : 'user_id' },
-               UpdateExpression: 'set message_text = :message_text, ',
-               ConditionExpression: '#a < :MAX',
-               ExpressionAttributeNames: {'#a' : 'Sum'},
+               Key: { 'user_id' : USER_ID,
+                      'template_id': TEMPLATE_ID},
+               UpdateExpression: 'SET message_text = :message_text, template_name = :template_name',
                ExpressionAttributeValues: {
-                   ':x' : 20,
-                   ':y' : 45,
-                   ':MAX' : 100,
-               }
+                   ':message_text' : value.message_text,
+                   ':template_name' : value.template_name,
+               },
+               ReturnValues:'ALL_NEW'
            };
 
+            const update = await  dynamodb.doc.update(updateParamas).promise()
+           return {
+               statusCode:httpStatus.OK,
+               body:JSON.stringify({"message":update})
+           }
        }
        catch (e)
        {
