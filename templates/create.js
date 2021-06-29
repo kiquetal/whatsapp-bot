@@ -86,7 +86,7 @@ module.exports.handler = async (event, context) => {
 
         } else {
 
-            throw  new Error(error.stack);
+            return util.returnError(400,error.stack);
         }
     }
     catch (e) {
