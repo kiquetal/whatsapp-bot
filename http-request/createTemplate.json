@@ -1,6 +1,6 @@
 {
  "user_id":"5",
- "message_text":"hola",
+ "message_text":"hola-2",
  "template_name":"template1",
  "someKey":"21",
  "idempotent_key":"a07c287c-4f2a-4f5e-be66-cbed3f0e1d7w"

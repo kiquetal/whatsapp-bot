@@ -6,6 +6,8 @@ provider:
   lambdaHashingVersion: 20201221
   stage: dev
   region: us-east-1
+  environment:
+    TEMPLATE_TABLE: ${self:custom.tables.templateTable}
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -73,6 +75,13 @@ functions:
           method: get
     environment:
       TEMPLATE_TABLE: ${self:custom.tables.templateTable}
+  templateByUser:
+    handler: templates/list.handler
+    events:
+      - httpApi:
+          path: /templates/{user_id}
+          method: get
+
 
 custom:
   dynamodb:
