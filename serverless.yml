@@ -67,7 +67,12 @@ functions:
       - http:
           path: /templates/{user_id}
           method: get
-
+  uploadUserFile:
+    handler: upload/main.handler
+    events:
+      - http:
+          path: /upload-url/{user_id}
+          method: post
 
 custom:
   dynamodb:
