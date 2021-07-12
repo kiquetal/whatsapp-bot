@@ -9,6 +9,7 @@ provider:
   region: us-east-1
   environment:
     TEMPLATE_TABLE: ${self:custom.tables.templateTable}
+    BUCKET_NAME: ${self:custom.bucket.name}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -24,6 +25,21 @@ provider:
         - dynamodb:Query
         - dynamodb:Scan
       Resource: "arn:aws:dynamodb:us-east-1:572553955017:table/templatesTable/index/*"
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+        - s3:PutObjectTagging
+      Resource: "arn:aws:s3:::whatsapp-dev-manning/*"
+
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+        - s3:PutObjectTagging
+      Resource: "arn:aws:s3:::whatsapp-dev-manning"
+
+
 plugins:
   - serverless-dynamodb-local
   - serverless-offline
@@ -88,6 +104,9 @@ custom:
     httpPort: 4000
   tables:
     templateTable: templatesTable
+  bucket:
+    name: ${self:service}-${self:provider.stage}-manning
+
 
 resources:
   Resources:
@@ -119,3 +138,22 @@ resources:
               WriteCapacityUnits: 1
             Projection:
               ProjectionType: ALL
+
+    s3BucketForUpload:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.bucket.name}
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - POST
+                - PUT
+              AllowedOrigins:
+                - '*'
