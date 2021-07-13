@@ -10,6 +10,7 @@ provider:
   environment:
     TEMPLATE_TABLE: ${self:custom.tables.templateTable}
     BUCKET_NAME: ${self:custom.bucket.name}
+    QUEUE_NAME: ${self:custom.queue.name}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -106,7 +107,8 @@ custom:
     templateTable: templatesTable
   bucket:
     name: ${self:service}-${self:provider.stage}-manning
-
+  queue:
+    name: WhatsAppMessageQueue
 
 resources:
   Resources:
@@ -157,3 +159,7 @@ resources:
                 - PUT
               AllowedOrigins:
                 - '*'
+    WhatsAppMessageQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.queue.name}
