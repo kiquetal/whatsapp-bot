@@ -11,6 +11,7 @@ provider:
     TEMPLATE_TABLE: ${self:custom.tables.templateTable}
     BUCKET_NAME: ${self:custom.bucket.name}
     QUEUE_NAME: ${self:custom.queue.name}
+    NOTFICATION_TABLE: ${self:custom.tables.notificationTable}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -96,7 +97,8 @@ functions:
       - http:
           path: /upload-url/{user_id}
           method: post
-
+  notification:
+    handler: notification/main.handler
 custom:
   dynamodb:
     migration:
@@ -111,6 +113,7 @@ custom:
     httpPort: 4000
   tables:
     templateTable: templatesTable
+    notificationTable: notificationTable
   bucket:
     name: ${self:service}-${self:provider.stage}-manning
   queue:
@@ -171,3 +174,19 @@ resources:
         QueueName: ${self:custom.queue.name}
     notificationTable:
       Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tables.notificationTable}
+        BillingMode: PROVISIONED
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+          - AttributeName: notification_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+          - AttributeName: notification_id
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

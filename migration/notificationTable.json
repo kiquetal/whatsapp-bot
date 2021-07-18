@@ -1,0 +1,23 @@
+{
+  "Table": {
+    "TableName": "notificationTable",
+    "KeySchema": [{
+      "AttributeName": "user_id",
+      "KeyType": "HASH"
+    }, {
+      "AttributeName": "notification_id",
+      "KeyType": "RANGE"
+    }],
+    "AttributeDefinitions": [{
+      "AttributeName": "user_id",
+      "AttributeType": "S"
+    }, {
+      "AttributeName": "notification_id",
+      "AttributeType": "S"
+    }],
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 1,
+      "WriteCapacityUnits": 1
+    }
+  }
+}
