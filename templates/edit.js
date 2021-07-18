@@ -15,8 +15,6 @@ module.exports.handler = async (event, context) => {
         const TABLE_NAME = process.env.TEMPLATE_TABLE;
         const USER_ID = event.pathParameters.user_id;
         const TEMPLATE_ID = event.pathParameters.template_id;
-
-
         const {value, error, warning} = schema.validate(JSON.parse(event.body),{allowUnknown:true});
         if (error)
         {
@@ -32,8 +30,7 @@ module.exports.handler = async (event, context) => {
             }
         };
 
-       try{
-        const data = await   dynamodb.doc.query(params).promise()
+         const data = await   dynamodb.doc.query(params).promise()
             console.log("util"+ JSON.stringify(util));
            if (data.Items.length<1)
            {
@@ -54,21 +51,11 @@ module.exports.handler = async (event, context) => {
                ReturnValues:'ALL_NEW'
            };
 
-            const update = await  dynamodb.doc.update(updateParamas).promise()
+           const update = await  dynamodb.doc.update(updateParamas).promise()
            return {
                statusCode:httpStatus.OK,
                body:JSON.stringify({"message":update})
            }
-       }
-       catch (e)
-       {
-           return util.returnError(500,e.message);
-       }
-
-        return {
-            statusCode:httpStatus.OK,
-            body:JSON.stringify({"userId":USER_ID,"template_id":TEMPLATE_ID})
-        }
 
     }
     catch (e) {

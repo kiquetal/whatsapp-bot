@@ -39,7 +39,13 @@ provider:
         - s3:GetObject
         - s3:PutObjectTagging
       Resource: "arn:aws:s3:::whatsapp-dev-manning"
-
+    - Effect: Allow
+      Action:
+        - sqs:SendMessage
+      Resource:
+        Fn::GetAtt:
+          - WhatsAppMessageQueue
+          - Arn
 
 plugins:
   - serverless-dynamodb-local
@@ -163,3 +169,5 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.queue.name}
+    notificationTable:
+      Type: AWS::DynamoDB::Table
