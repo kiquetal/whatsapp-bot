@@ -12,6 +12,8 @@ provider:
     BUCKET_NAME: ${self:custom.bucket.name}
     QUEUE_NAME: ${self:custom.queue.name}
     NOTFICATION_TABLE: ${self:custom.tables.notificationTable}
+    QUEUE_URL:
+      Ref: WhatsAppMessageQueue
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -99,6 +101,10 @@ functions:
           method: post
   notification:
     handler: notification/main.handler
+    events:
+      - http:
+          path: /notifications
+          method: post
 custom:
   dynamodb:
     migration:
