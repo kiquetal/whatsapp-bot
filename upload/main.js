@@ -31,7 +31,7 @@ module.exports.handler = async (event, context) => {
         console.log(JSON.stringify(params));
         var url =  S3.getSignedUrl('putObject', params);
 
-        return {
+           return {
             statusCode: httpStatus.OK,
             body:JSON.stringify({"message":url})
 
