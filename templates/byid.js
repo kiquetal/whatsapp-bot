@@ -6,6 +6,7 @@ const uuid = require('uuid');
 const util = require('./util');
 module.exports.handler = async (event, context) => {
     try {
+        console.log("obtener for template_id");
         const TABLE_NAME = process.env.TEMPLATE_TABLE;
         const TEMPLATE_ID = event.pathParameters.template_id;
         const queryParam = {
@@ -13,7 +14,7 @@ module.exports.handler = async (event, context) => {
             IndexName:"template-id-index",
             KeyConditionExpression:"template_id = :template_id",
             ExpressionAttributeValues:{
-                ":teamplte_id":TEMPLATE_ID
+                ":template_id":TEMPLATE_ID
             }
 
         }
