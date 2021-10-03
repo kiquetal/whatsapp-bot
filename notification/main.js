@@ -5,10 +5,9 @@ const httpStatus = require('http-status');
 const uuid = require('uuid');
 const util = require('../templates/util');
 const AWS = require('aws-sdk');
+const S3= new AWS.S3();
 const SQS = new AWS.SQS();
 module.exports.handler = async (event, context) => {
-
-
     const schema = Joi.object({
         message:Joi.string().required(),
         user_id:Joi.string().required(),
@@ -17,6 +16,7 @@ module.exports.handler = async (event, context) => {
         recipient:Joi.string()
     });
     try {
+
         const queueURL = process.env.QUEUE_URL;
         const queueName = process.env.QUEUE_NAME;
         const BUCKET_NAME = process.env.BUCKET_NAME;
@@ -26,20 +26,19 @@ module.exports.handler = async (event, context) => {
         if (error)
           return  util.returnError(400,error.stack);
 
-        if (value.recipient_list_file !=null)
+        if (event.body.recipient_list_file !=null)
         {
-            const bucketKey = value.recipient_list_file;
+            const bucketKey = event.body.recipient_list_file;
 
-            console.log("file to search " + bucketKey);
             const params = {
                 Bucket:BUCKET_NAME,
                 Key:bucketKey,
 
             };
-            try
-            {
-                const result = await S3.getObject(params).promise();
-                console.log(result.Body.toJSON());
+            try{
+                
+
+           const result = await S3.getObject(params).promise()
             }
             catch ( ex)
             {
