@@ -19,11 +19,32 @@ module.exports.handler = async (event, context) => {
 
         const queueURL = process.env.QUEUE_URL;
         const queueName = process.env.QUEUE_NAME;
+        const BUCKET_NAME = process.env.BUCKET_NAME;
         console.log(queueURL);
         console.log(queueName);
         const {value, error, warning} = schema.validate(JSON.parse(event.body),{allowUnknown:true});
         if (error)
           return  util.returnError(400,error.stack);
+
+        if (event.body.recipient_list_file !=null)
+        {
+            const bucketKey = event.body.recipient_list_file;
+
+            const params = {
+                Bucket:BUCKET_NAME,
+                Key:bucketKey,
+
+            };
+            try{
+                
+
+           const result = await S3.getObject(params).promise()
+            }
+            catch ( ex)
+            {
+                console.log("Error obteniendo el object " + ex.message);
+            }
+        }
 
         return {
             statusCode:200,

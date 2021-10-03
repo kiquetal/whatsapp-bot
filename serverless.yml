@@ -12,8 +12,9 @@ provider:
     BUCKET_NAME: ${self:custom.bucket.name}
     QUEUE_NAME: ${self:custom.queue.name}
     NOTFICATION_TABLE: ${self:custom.tables.notificationTable}
-    QUEUE_URL:
+    QUEUE_URL: {
       Ref: WhatsAppMessageQueue
+     }
   iamRoleStatements:
     - Effect: "Allow"
       Action:
