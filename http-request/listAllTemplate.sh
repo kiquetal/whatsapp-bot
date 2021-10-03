@@ -1,1 +1,1 @@
-http GET http://localhost:4000/templates/5
+http GET http://localhost:4000/dev/templates/5

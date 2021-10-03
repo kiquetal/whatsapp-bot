@@ -7,20 +7,17 @@ const util = require('./util');
 module.exports.handler = async (event, context) => {
     try {
         const TABLE_NAME = process.env.TEMPLATE_TABLE;
-        const USER_ID = event.pathParameters.user_id;
         const TEMPLATE_ID = event.pathParameters.template_id;
-
-
         const queryParam = {
             TableName: TABLE_NAME,
-            KeyConditionExpression:"user_id = :user_id and template_id = :template_id",
-            ExpressionAttributeValues: {
-              ':user_id':USER_ID,
-              ':template_id':TEMPLATE_ID
+            IndexName:"template-id-index",
+            KeyConditionExpression:"template_id = :template_id",
+            ExpressionAttributeValues:{
+                ":teamplte_id":TEMPLATE_ID
             }
-        };
 
-        console.log(JSON.stringify(queryParam));
+        }
+
 
         const data = await  dynamodb.doc.query(queryParam).promise();
         if (data.Items.length<1)

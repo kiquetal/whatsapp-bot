@@ -92,6 +92,12 @@ functions:
       - http:
           path: /templates/{user_id}
           method: get
+  templateById:
+    handler: templates/byid.handler
+    events:
+      - http:
+          path: /templates/{template_id}
+          method: get
   uploadUserFile:
     handler: upload/main.handler
     events:

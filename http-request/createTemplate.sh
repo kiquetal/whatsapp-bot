@@ -1,1 +1,1 @@
-http POST http://localhost:4000/templates < createTemplate.json
+http POST http://localhost:4000/dev/templates < createTemplate.json
