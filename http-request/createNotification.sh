@@ -1,1 +1,1 @@
-http POST http://localhost:4000/dev/notifications < createTemplate.json
+http POST http://localhost:4000/dev/notifications < createNotification.json

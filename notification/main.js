@@ -9,8 +9,11 @@ const S3= new AWS.S3();
 const SQS = new AWS.SQS();
 module.exports.handler = async (event, context) => {
     const schema = Joi.object({
-        file_name: Joi.string()
-            .required()
+        message:Joi.string().required(),
+        user_id:Joi.string().required(),
+        message_template_id:Joi.string(),
+        recipient_list_file:Joi.string(),
+        recipient:Joi.string()
     });
     try {
 
@@ -20,8 +23,14 @@ module.exports.handler = async (event, context) => {
         console.log(queueName);
         const {value, error, warning} = schema.validate(JSON.parse(event.body),{allowUnknown:true});
         if (error)
-            util.returnError(400,error.stack);
+          return  util.returnError(400,error.stack);
 
+        return {
+            statusCode:200,
+            body:JSON.stringify({
+                "message":"OK"
+            })
+        }
 
     }
     catch (e) {
