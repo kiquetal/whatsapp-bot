@@ -5,9 +5,10 @@ const httpStatus = require('http-status');
 const uuid = require('uuid');
 const util = require('../templates/util');
 const AWS = require('aws-sdk');
-const S3= new AWS.S3();
 const SQS = new AWS.SQS();
 module.exports.handler = async (event, context) => {
+
+
     const schema = Joi.object({
         message:Joi.string().required(),
         user_id:Joi.string().required(),
