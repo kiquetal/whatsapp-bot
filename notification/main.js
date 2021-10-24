@@ -16,7 +16,6 @@ module.exports.handler = async (event, context) => {
         recipient:Joi.string()
     });
     try {
-
         const queueURL = process.env.QUEUE_URL;
         const queueName = process.env.QUEUE_NAME;
         const BUCKET_NAME = process.env.BUCKET_NAME;
@@ -26,19 +25,20 @@ module.exports.handler = async (event, context) => {
         if (error)
           return  util.returnError(400,error.stack);
 
-        if (event.body.recipient_list_file !=null)
+        if (value.recipient_list_file !=null)
         {
-            const bucketKey = event.body.recipient_list_file;
+            const bucketKey = value.recipient_list_file;
 
+            console.log("file to search " + bucketKey);
             const params = {
                 Bucket:BUCKET_NAME,
                 Key:bucketKey,
 
             };
-            try{
-                
-
-           const result = await S3.getObject(params).promise()
+            try
+            {
+                const result = await S3.getObject(params).promise();
+                console.log(result.Body.toJSON());
             }
             catch ( ex)
             {

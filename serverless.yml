@@ -53,7 +53,7 @@ provider:
 plugins:
   - serverless-dynamodb-local
   - serverless-offline
-
+  - serverless-s3-local
 functions:
   templatesCreate:
     handler: templates/create.handler
