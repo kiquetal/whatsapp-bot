@@ -6,10 +6,11 @@
     "jest": "^27.0.6",
     "joi": "^17.4.0",
     "serverless-dynamodb-client": "^0.0.2",
-    "serverless-dynamodb-local": "^0.2.39"
+    "serverless-dynamodb-local": "^1.0.2",
+    "serverless-dynamodb-local-2": "^0.2.0"
   },
   "devDependencies": {
-    "serverless-offline": "^7.0.0",
+    "serverless-offline": "^8.2.0",
     "serverless-s3-local": "^0.6.20",
     "uuid": "^3.3.2"
   }

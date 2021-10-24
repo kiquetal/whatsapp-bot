@@ -14,7 +14,7 @@ provider:
     NOTFICATION_TABLE: ${self:custom.tables.notificationTable}
     QUEUE_URL: {
       Ref: WhatsAppMessageQueue
-     }
+    }
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -49,9 +49,11 @@ provider:
         Fn::GetAtt:
           - WhatsAppMessageQueue
           - Arn
+
 plugins:
-  - serverless-dynamodb-local
+  - serverless-dynamodb-local-2
   - serverless-offline
+  - serverless-s3-local
 functions:
   templatesCreate:
     handler: templates/create.handler
@@ -128,7 +130,9 @@ custom:
     name: ${self:service}-${self:provider.stage}-manning
   queue:
     name: WhatsAppMessageQueue
-
+  s3:
+    host: localhost
+    directory: /tmp
 resources:
   Resources:
     templateTable:
@@ -147,8 +151,8 @@ resources:
           - AttributeName: template_id
             KeyType: RANGE
         ProvisionedThroughput:
-           ReadCapacityUnits: 1
-           WriteCapacityUnits: 1
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
         GlobalSecondaryIndexes:
           - IndexName: template-id-index
             KeySchema:
