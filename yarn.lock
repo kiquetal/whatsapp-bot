@@ -302,7 +302,7 @@
   "resolved" "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   "version" "0.2.3"
 
-"@fast-csv/format@4.3.5":
+"@fast-csv/format@^4.3.5", "@fast-csv/format@4.3.5":
   "integrity" "sha512-8iRn6QF3I8Ak78lNAa+Gdl5MJJBM5vRHivFtMRUWINdevNo00K7OXxS2PshawLKTejVwieIlPmK5YlLu6w4u8A=="
   "resolved" "https://registry.npmjs.org/@fast-csv/format/-/format-4.3.5.tgz"
   "version" "4.3.5"

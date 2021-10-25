@@ -6,6 +6,8 @@ const uuid = require('uuid');
 const util = require('../templates/util');
 const AWS = require('aws-sdk');
 const SQS = new AWS.SQS();
+const csv = require('@fast-csv/format');
+
 module.exports.handler = async (event, context) => {
 
     const S3 = new AWS.S3({
@@ -14,6 +16,7 @@ module.exports.handler = async (event, context) => {
         secretAccessKey: 'S3RVER',
         endpoint: new AWS.Endpoint('http://localhost:4569'),
     });
+
 
 
     const schema = Joi.object({
@@ -32,11 +35,30 @@ module.exports.handler = async (event, context) => {
         console.log(queueURL);
         console.log(queueName);
 
-        S3.putObject({
-            Bucket: BUCKET_NAME,
-            Key: '1234',
-            Body: new Buffer('abcd')
-        }, () => {} );
+
+
+        const fs = require('fs');
+        const path = require('path');
+
+
+
+        csv.writeToBuffer([{"data":"123123"},{"data":"2312321"}],{
+            headers:false
+        }).then((val) => {
+
+            S3.putObject({
+                Bucket: BUCKET_NAME,
+                Key: 'phones.csv',
+                ContentType:'text/csv',
+                Body: val
+            }, () => {
+                 console.log("hemos escrito en local");
+              } );
+
+
+        });
+
+
 
 
         const {value, error, warning} = schema.validate(JSON.parse(event.body),{allowUnknown:true});
