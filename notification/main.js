@@ -7,6 +7,7 @@ const util = require('../templates/util');
 const AWS = require('aws-sdk');
 const SQS = new AWS.SQS();
 const csv = require('@fast-csv/format');
+const Buffer = require("buffer");
 
 module.exports.handler = async (event, context) => {
 
@@ -37,26 +38,7 @@ module.exports.handler = async (event, context) => {
 
 
 
-        const fs = require('fs');
-        const path = require('path');
-
-
-
-        csv.writeToBuffer([{"data":"123123"},{"data":"2312321"}],{
-            headers:false
-        }).then((val) => {
-
-            S3.putObject({
-                Bucket: BUCKET_NAME,
-                Key: 'phones.csv',
-                ContentType:'text/csv',
-                Body: val
-            }, () => {
-                 console.log("hemos escrito en local");
-              } );
-
-
-        });
+       // writeToS3Locally(csv,S3,BUCKET_NAME);
 
 
 
@@ -65,24 +47,49 @@ module.exports.handler = async (event, context) => {
         if (error)
           return  util.returnError(400,error.stack);
 
-        if (event.body.recipient_list_file !=null)
+        if (value.recipient_list_file !=null)
         {
-            const bucketKey = event.body.recipient_list_file;
+            const bucketKey = value.recipient_list_file;
 
+            console.log("bucketKey" + bucketKey);
             const params = {
                 Bucket:BUCKET_NAME,
-                Key:bucketKey,
+                Key:bucketKey
 
             };
             try{
 
 
-           const result = await S3.getObject(params).promise()
+                console.log("obtener s3 locally");
+           const result = await S3.getObject(params).createReadStream();
+
+
+
+           result.on("data",function (data) {
+               console.log(data.toString());
+           });
+
+                result.on('end',function() {
+                    console.log("end");
+                });
+           result.on('error',result=> {
+               console.log(result);
+           });
+
+
+
+
+
+
             }
             catch ( ex)
             {
                 console.log("Error obteniendo el object " + ex.message);
             }
+        }
+        else
+        {
+            console.log("no recibido el bucketKey");
         }
 
         return {
@@ -98,5 +105,33 @@ module.exports.handler = async (event, context) => {
     }
 };
 
+const streamToString = (stream) =>
+    new Promise((resolve, reject) => {
+        const chunks = [];
+        stream.on("data", (chunk) => chunks.push(chunk));
+        stream.on("error", reject);
+        stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+    });
 
 
+
+function writeToS3Locally(csv,s3,BUCKET_NAME)
+{
+
+    csv.writeToBuffer([{"data":"123123"},{"data":"2312321"}],{
+        headers:false
+    }).then((val) => {
+
+        s3.putObject({
+            Bucket: BUCKET_NAME,
+            Key: 'phones.csv',
+            ContentType:'text/csv',
+            Body: val
+        }, () => {
+            console.log("hemos escrito en local");
+        } );
+
+
+    });
+
+}
